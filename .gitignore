@@ -1,3 +1,4 @@
 node_modules/
 tools/*.png
 .DS_Store
+.env*

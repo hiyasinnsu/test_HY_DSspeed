@@ -96,7 +96,10 @@ class Cdp {
 }
 
 export async function runBrowserCheck() {
-  const server = await createServer(PORT);
+  // Set CHECK_URL to run the same assertions against the deployed site.
+  const externalUrl = process.env.CHECK_URL || '';
+  const server = externalUrl ? null : await createServer(PORT);
+  const baseUrl = externalUrl || `http://127.0.0.1:${PORT}/`;
   const userDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-speed-'));
   const chrome = spawn(CHROME, [
     '--headless=new',
@@ -116,7 +119,7 @@ export async function runBrowserCheck() {
   try {
     await waitFor(`http://127.0.0.1:${DEBUG_PORT}/json/version`);
     const target = await (await fetch(
-      `http://127.0.0.1:${DEBUG_PORT}/json/new?${encodeURIComponent(`http://127.0.0.1:${PORT}/`)}`,
+      `http://127.0.0.1:${DEBUG_PORT}/json/new?${encodeURIComponent(baseUrl)}`,
       { method: 'PUT' },
     )).json();
     await sleep(300);
@@ -128,7 +131,13 @@ export async function runBrowserCheck() {
       width: 430, height: 900, deviceScaleFactor: 2, mobile: false,
     });
     await cdp.send('Page.reload', { ignoreCache: true });
-    await sleep(1800);
+    // Cold CDN loads can take a few seconds; wait for the module to boot.
+    let ready = false;
+    for (let i = 0; i < 60 && !ready; i++) {
+      await sleep(250);
+      ready = await cdp.eval('!!window.__dsDebug && document.getElementById("game").width > 300');
+    }
+    await sleep(200);
 
     report.title = await cdp.eval('document.title');
     report.boot = await cdp.eval('!!window.__dsDebug');
@@ -206,6 +215,32 @@ export async function runBrowserCheck() {
     await sleep(400);
     await cdp.shot('shot-boss.png');
 
+    // Phone pass: touch drag, two-finger focus, and no horizontal overflow.
+    await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
+    await cdp.send('Emulation.setDeviceMetricsOverride', {
+      width: 390, height: 844, deviceScaleFactor: 3, mobile: true,
+    });
+    await sleep(700);
+    report.layout = await cdp.eval('({ innerW: innerWidth, innerH: innerHeight, frameW: Math.round(document.getElementById("frame").getBoundingClientRect().width), frameH: Math.round(document.getElementById("frame").getBoundingClientRect().height), overflowX: document.documentElement.scrollWidth > innerWidth + 1 })');
+    const r2 = await cdp.eval('(() => { const r = document.getElementById("game").getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; })()');
+    const tx = r2.x + r2.w / 2;
+    const ty = r2.y + r2.h * 0.7;
+    const touchBefore = await cdp.eval('__dsDebug.world.player.x');
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: tx, y: ty, id: 1 }] });
+    for (let i = 1; i <= 8; i++) {
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: tx + i * 6, y: ty, id: 1 }] });
+      await sleep(16);
+    }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await sleep(300);
+    report.touchMovedBy = await cdp.eval(`Math.round(__dsDebug.world.player.x - ${touchBefore})`);
+
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: tx, y: ty, id: 1 }, { x: tx + 44, y: ty, id: 2 }] });
+    await sleep(150);
+    report.focusOnTwoFingers = await cdp.eval('__dsDebug.world.player.focus === true');
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await cdp.shot('shot-mobile.png');
+
     report.errors = cdp.errors;
     report.ok = Boolean(report.boot)
       && Boolean(report.afterStart && report.afterStart.exists)
@@ -217,11 +252,14 @@ export async function runBrowserCheck() {
       && report.result && report.result.visible === true
       && report.result.kicker === 'STAGE CLEAR'
       && report.boss && report.boss.hasBoss === true && report.boss.state === 'fight'
+      && report.touchMovedBy > 5
+      && report.focusOnTwoFingers === true
+      && report.layout && report.layout.overflowX === false
       && report.errors.length === 0
       && report.fps >= 40;
   } finally {
     chrome.kill();
-    server.close();
+    if (server) server.close();
     try {
       fs.rmSync(userDir, { recursive: true, force: true });
     } catch {

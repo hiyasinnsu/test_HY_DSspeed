@@ -33,6 +33,7 @@
 npm run serve     # http://127.0.0.1:8123/ で確認
 npm test          # ロジック + ヘッドレスブラウザのテスト
 npm run sim       # 無敵ボットでステージを自動プレイし、バランスを数値確認
+node --test tests/live.check.mjs   # 公開中の GitHub Pages を実ブラウザで検証
 ```
 
 `npm test` は Chrome をヘッドレス起動して、起動・移動・ボム・ポーズ・リザルト・ボス戦・FPS・
@@ -64,3 +65,9 @@ tools/                  静的サーバ、バランスシミュレータ、ブ�
 
 GitHub Pages（`main` ブランチのルート）で配信しています。`index.html` は相対パスで参照しているので、
 `https://<user>.github.io/<repo>/` のようなサブパスでもそのまま動きます。`.nojekyll` により Jekyll 処理を無効化。
+
+Pages の有効化とビルド状態の確認（`repo` スコープのトークンが必要）:
+
+```sh
+GITHUB_TOKEN=... node tools/pages.mjs
+```

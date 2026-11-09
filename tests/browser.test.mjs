@@ -17,6 +17,9 @@ test('browser smoke test', { timeout: 120000 }, async () => {
   assert.equal(report.resumed, 'playing');
   assert.equal(report.result.mode, 'result');
   assert.equal(report.result.visible, true, 'result screen appears');
+  assert.ok(report.touchMovedBy > 5, 'touch drag moves the ship');
+  assert.equal(report.focusOnTwoFingers, true, 'two fingers switch to focus mode');
+  assert.equal(report.layout.overflowX, false, 'no horizontal overflow on a phone viewport');
   assert.ok(report.fps >= 40, `fps ${report.fps}`);
   assert.deepEqual(report.errors, []);
   assert.equal(report.ok, true);
