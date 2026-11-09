@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="35%" r="75%">
+      <stop offset="0%" stop-color="#12244c"/>
+      <stop offset="60%" stop-color="#070b1c"/>
+      <stop offset="100%" stop-color="#03040a"/>
+    </radialGradient>
+    <linearGradient id="ship" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="55%" stop-color="#9beeff"/>
+      <stop offset="100%" stop-color="#2f8bff"/>
+    </linearGradient>
+    <linearGradient id="bolt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff6fd"/>
+      <stop offset="50%" stop-color="#ff8ad4"/>
+      <stop offset="100%" stop-color="#a53cff"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <g opacity="0.55" stroke="#7fd9ff" stroke-width="6" stroke-linecap="round">
+    <path d="M120 120v40M120 240v26M392 96v52M392 220v34M256 72v30"/>
+  </g>
+  <g fill="none" stroke="#ff8ad4" stroke-width="7" opacity="0.75">
+    <circle cx="256" cy="250" r="150"/>
+    <circle cx="256" cy="250" r="112" stroke-dasharray="18 22"/>
+  </g>
+  <path d="M256 132l34 92 60 44-38 12-56 92-56-92-38-12 60-44z" fill="url(#ship)" stroke="#dff7ff" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M256 214l16 34 28 12-44 6-44-6 28-12z" fill="url(#bolt)"/>
+  <circle cx="256" cy="300" r="14" fill="#ff4f7a"/>
+  <circle cx="256" cy="300" r="6" fill="#ffffff"/>
+</svg>

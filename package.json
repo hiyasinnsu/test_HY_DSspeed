@@ -1,0 +1,12 @@
+{
+  "name": "ds-speed",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Mobile-friendly danmaku shooter, built with vanilla ES modules and Canvas 2D.",
+  "scripts": {
+    "test": "node --test tests/",
+    "sim": "node tools/sim.mjs normal 240",
+    "serve": "node tools/serve.mjs"
+  }
+}

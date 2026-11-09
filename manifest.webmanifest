@@ -1,0 +1,20 @@
+{
+  "name": "DS SPEED - 弾幕シューティング",
+  "short_name": "DS SPEED",
+  "description": "スマホのブラウザで遊べる弾幕シューティング。指で避けて、撃ちまくれ。",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#04050c",
+  "theme_color": "#05071a",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

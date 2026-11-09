@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#05071a" />
+<meta name="description" content="スマホのブラウザで遊べる弾幕シューティングゲーム。指で避けて、撃ちまくれ。" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<title>DS SPEED - 弾幕シューティング</title>
+<link rel="icon" href="./icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="./icon.svg" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="stylesheet" href="./styles/main.css" />
+</head>
+<body>
+<div id="app">
+  <div id="frame">
+    <canvas id="game" aria-label="弾幕シューティングのプレイ画面"></canvas>
+
+    <div id="touch-ui" class="hidden">
+      <button id="btn-bomb" class="bomb-btn" type="button" aria-label="ボムを撃つ">BOMB<b id="bomb-count">3</b></button>
+      <button id="btn-pause" class="pause-btn" type="button" aria-label="ポーズ">❚❚</button>
+    </div>
+
+    <div id="screens">
+      <section id="screen-title" class="screen">
+        <div class="panel">
+          <p class="kicker">DANMAKU SHOOTER</p>
+          <h1 class="logo">DS <span>SPEED</span></h1>
+          <p class="lead">指で避けて、撃ちまくれ。</p>
+          <div class="diff-row" role="group" aria-label="難易度">
+            <button class="diff" type="button" data-diff="easy">かんたん</button>
+            <button class="diff" type="button" data-diff="normal">ふつう</button>
+            <button class="diff" type="button" data-diff="hard">むずかしい</button>
+          </div>
+          <button id="btn-start" class="primary" type="button">START</button>
+          <p class="meta">難易度 <span id="title-diff">ふつう</span> ・ BEST <span id="best-score">0</span></p>
+          <p class="rotate-hint">端末を縦向きにすると遊びやすくなります。</p>
+          <details class="howto">
+            <summary>あそびかた</summary>
+            <ul>
+              <li>画面をドラッグして移動。ショットは自動です。</li>
+              <li>2本指で触れると低速移動になり、当たり判定が見えます。</li>
+              <li>BOMBボタンで弾を消しつつダメージを与えます。</li>
+              <li>キーボード: 矢印キー移動 / Shift低速 / Zボム / Pポーズ。</li>
+            </ul>
+          </details>
+          <button class="ghost" type="button" data-sound>SOUND ON</button>
+        </div>
+      </section>
+
+      <section id="screen-pause" class="screen hidden">
+        <div class="panel">
+          <p class="kicker">PAUSE</p>
+          <h2>ひと休み</h2>
+          <button id="btn-resume" class="primary" type="button">再開</button>
+          <button id="btn-retry-pause" class="ghost" type="button">リトライ</button>
+          <button id="btn-title-pause" class="ghost" type="button">タイトルへ</button>
+          <button class="ghost" type="button" data-sound>SOUND ON</button>
+        </div>
+      </section>
+
+      <section id="screen-result" class="screen hidden">
+        <div class="panel">
+          <p id="result-kicker" class="kicker">STAGE CLEAR</p>
+          <h2 id="result-title">ふつう</h2>
+          <p id="result-score" class="score">0</p>
+          <p id="result-detail" class="detail">GRAZE 0</p>
+          <p id="result-record" class="record hidden">NEW RECORD!</p>
+          <p id="result-best" class="meta">BEST 0</p>
+          <button id="btn-retry" class="primary" type="button">もう一度</button>
+          <button id="btn-title" class="ghost" type="button">タイトルへ</button>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>
